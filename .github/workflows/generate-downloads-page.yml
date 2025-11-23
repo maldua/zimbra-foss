@@ -1,0 +1,82 @@
+name: generate-downloads-page
+
+on:
+  push:
+    tags:
+      - generate-downloads/*
+
+jobs:
+  downloads-page:
+    runs-on: ubuntu-latest
+    environment: git_clone
+
+    steps:
+
+      # -----------------------------
+      # Metadata
+      # -----------------------------
+      - name: Simple Date
+        id: simple-date
+        run: echo "date=$(date '+%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip requests
+
+      # -----------------------------
+      # Checkout current tag → current/
+      # -----------------------------
+      - name: Checkout current tag into current/
+        uses: actions/checkout@v4
+        with:
+          path: current
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+
+      # -----------------------------
+      # Build docs using the current tag
+      # -----------------------------
+      - name: Build documentation (make.py)
+        run: |
+          cd current/docs-pages
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} python3 make.py
+
+      # -----------------------------
+      # Create orphan branch in a temp folder
+      # -----------------------------
+      - name: Prepare orphan branch with only docs/
+        run: |
+          # Clone empty temp repo
+          rm -rf temp_publish
+          mkdir temp_publish
+          cd temp_publish
+          git init
+
+          # Configure Git user
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Add remote and fetch orphan branch
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          # optional: git fetch origin publish-downloads-dev
+
+          # Create orphan branch
+          git checkout --orphan publish-downloads-dev
+
+          # Remove any files if they exist (optional, ignore error)
+          git rm -rf . || true
+
+          # Copy the docs folder
+          cp -R ../current/docs ./docs
+
+          # Remove .gitignore in docs if it exists
+          rm -f docs/.gitignore
+
+          # Commit and push
+          git add docs
+          git commit -m "Docs automatically regenerated at ${{ steps.simple-date.outputs.date }}"
+          git push origin publish-downloads-dev --force
