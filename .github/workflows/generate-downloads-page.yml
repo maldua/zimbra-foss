@@ -1,0 +1,43 @@
+name: generate-downloads-page
+
+on:
+  push:
+    tags:
+      - generate-downloads/*
+
+jobs:
+  downloads-page:
+    runs-on: ubuntu-latest
+    environment: git_clone
+    steps:
+      - name: Simple Date
+        id: simple-date
+        run: echo "date=$(date '+%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependencies
+        run: python -m pip install --upgrade pip requests
+
+      - name: Check out the tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0  # fetch all history so we can push later
+
+      - name: Update downloads page
+        run: |
+          cd ${{ github.workspace }}/download-pages
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} ./generate-downloads-page.py
+
+      - name: Push updates to publish-downloads-dev
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B publish-downloads-dev
+          git add docs/downloads.md docs/advanced-downloads.md
+          git commit -m "downloads.md automatically regenerated at ${{ steps.simple-date.outputs.date }}" || echo "No changes to commit"
+          git push origin publish-downloads-dev --force
