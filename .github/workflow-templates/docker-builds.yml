@@ -1,0 +1,45 @@
+name: docker-{{NAME_SHORT}}
+
+on:
+  push:
+    tags:
+      - {{TAG_PREFIX}}/*
+
+env:
+  IMAGE_FQDN: ghcr.io/maldua/zimbra-foss
+
+jobs:
+  publish-zimbra-foss-builder-image:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro:
+          - name: {{NAME}}
+            version: {{VERSION}}
+            tag_prefix: {{TAG_PREFIX}}
+            dockerfile: {{DOCKERFILE}}
+            distro_family: {{DISTRO_FAMILY}}
+
+    name: Build and push Docker for ${{ matrix.distro.name }}
+    if: startsWith(github.ref, format('refs/tags/{0}', matrix.distro.tag_prefix))
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Split branch name
+        env:
+          BRANCH: ${{ github.ref_name }}
+        id: split-tag
+        run: echo "version=${BRANCH##*/}" >> $GITHUB_OUTPUT
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: zimbra-foss-builder Docker image
+        run: |
+          docker build --tag ${{ env.IMAGE_FQDN }}:docker-${{ matrix.distro.distro_family }}-${{ matrix.distro.version }}-${{ steps.split-tag.outputs.version }} . -f ${{ matrix.distro.dockerfile }}
+          docker push ${{ env.IMAGE_FQDN }}:docker-${{ matrix.distro.distro_family }}-${{ matrix.distro.version }}-${{ steps.split-tag.outputs.version }}
