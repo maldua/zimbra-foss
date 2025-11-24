@@ -1,4 +1,4 @@
-name: generate-downloads-page
+name: generate-downloads-page-v2
 
 on:
   push:
