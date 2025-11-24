@@ -114,7 +114,7 @@ Maldua's Zimbra FOSS often includes **Pimbra** patches. These are either securit
 
 - GPL-2.0 license
 - Community builds, not official Zimbra/Synacor binaries
-- No warranty of MERCHANTABILITY or FITNESS
+- No warranty of MERCHANTABILITY or FITNESS.
 
 ---
 
