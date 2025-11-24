@@ -1,6 +1,7 @@
 name: generate-downloads-page
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - generate-downloads/*
