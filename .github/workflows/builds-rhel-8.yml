@@ -1,0 +1,126 @@
+name: release-zimbra-rhel-8
+
+on:
+  push:
+    tags:
+      - builds-rhel-8/*
+
+env:
+  ZIMBRA_BUILDER_ID: 420
+  ZIMBRA_FOSS_BUILDER_VERSION: v0.0.4
+
+jobs:
+  zimbra-release:
+    name: Build Zimbra for RHEL 8
+    runs-on: ubuntu-latest
+    environment: git_clone
+
+
+    steps:
+
+      - name: Prepare workspace directories
+        run: |
+          mkdir -p ${{ github.workspace }}/zimbra-foss
+          mkdir -p ${{ github.workspace }}/zimbra-foss-builder
+
+      - name: Check out the current repo (zimbra-foss)
+        uses: actions/checkout@v4
+        with:
+          path: zimbra-foss
+
+      - name: Check out zimbra-foss-builder repo
+        uses: actions/checkout@v4
+        with:
+          repository: maldua/zimbra-foss-builder
+          path: zimbra-foss-builder
+          ref: ${{ env.ZIMBRA_FOSS_BUILDER_VERSION }}
+          ssh-key: ${{ secrets.read_only_ssh_key }}
+
+      - name: Split branch name
+        env:
+          BRANCH: ${{ github.ref_name }}
+        id: split-tag
+        run: echo "version=${BRANCH##*/}" >> $GITHUB_OUTPUT
+
+      - name: Prepare .ssh directory
+        run: |
+          mkdir ${{ github.workspace }}/zimbra-foss/.ssh
+          chmod 700 ${{ github.workspace }}/zimbra-foss/.ssh
+          echo "${{ secrets.read_only_ssh_key }}" > ${{ github.workspace }}/zimbra-foss/.ssh/id_rsa
+          chmod 600 ${{ github.workspace }}/zimbra-foss/.ssh/id_rsa
+
+      - name: Get runner uid
+        id: runner
+        run: |
+          echo "uid=$(id -u)" >> $GITHUB_OUTPUT
+          echo "gid=$(id -g)" >> $GITHUB_OUTPUT
+
+      - name: Run the build process with Docker
+        uses: addnab/docker-run-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          image: ${{ matrix.distro.docker_tag }}
+          options: >
+            -v ${{ github.workspace }}/zimbra-foss-builder:/usr/local/zimbra-foss-builder:ro
+            -v ${{ github.workspace }}/zimbra-foss-builder/BUILDS:/home/build/installer-build/BUILDS:rw
+            -v ${{ github.workspace }}/zimbra-foss/.ssh:/root/.ssh:rw
+          shell: bash
+          run: |
+            chown root:root /root/.ssh/
+            chown root:root /root/.ssh/id_rsa
+            touch /root/.ssh/known_hosts
+            ssh-keyscan github.com >> /root/.ssh/known_hosts
+            cd /home/build
+            /usr/local/zimbra-foss-builder/zimbra-smart-builder.sh \
+              ${{ steps.split-tag.outputs.version }} \
+              ${{ env.ZIMBRA_BUILDER_ID }} \
+              pimbra-disabled
+            chown -R ${{ steps.runner.outputs.uid }}:${{ steps.runner.outputs.gid }} /home/build/installer-build/BUILDS/*
+
+      - run: cat ${{ github.workspace }}/zimbra-foss-builder/BUILDS/zimbra-builder-commands.txt
+      - run: ls -la ${{ github.workspace }}/zimbra-foss-builder/BUILDS/
+
+      - name: Get tgz release filename
+        id: tgz-release
+        run: |
+          RELEASE_DIR=$(find ${{ github.workspace }}/zimbra-foss-builder/BUILDS -name '${{ matrix.distro.build_dir_prefix }}*' -type d)
+          RELEASE_TGZ=$(find "${RELEASE_DIR}" -name "zcs-*.tgz" -type f)
+          RELEASE_SHORT_TGZ=$(basename ${RELEASE_TGZ})
+          echo "directory=${RELEASE_DIR}" >> $GITHUB_OUTPUT
+          echo "filename=${RELEASE_TGZ}" >> $GITHUB_OUTPUT
+          echo "shortfilename=${RELEASE_SHORT_TGZ}" >> $GITHUB_OUTPUT
+
+      - name: Get zimbra-builder.sh commands
+        id: zimbra-builder
+        run: |
+          echo "commands<<EOF"$'\n'"$(cat ${{ github.workspace }}/zimbra-foss-builder/BUILDS/zimbra-builder-commands.txt)"$'\n'EOF >> $GITHUB_OUTPUT
+
+      - name: Generate checksums
+        run: |
+          cd ${{ steps.tgz-release.outputs.directory }}
+          md5sum ${{ steps.tgz-release.outputs.shortfilename }} > ${{ steps.tgz-release.outputs.shortfilename }}.md5
+          sha256sum ${{ steps.tgz-release.outputs.shortfilename }} > ${{ steps.tgz-release.outputs.shortfilename }}.sha256
+
+      - name: Release
+        uses: crowbarmaster/GH-Automatic-Releases@v1.6.0
+        with:
+          repo_token: ${{ github.token }}
+          prerelease: false
+          generate_notes: false
+          automatic_release_tag: zimbra-foss-build-builds-rhel-8/${{ steps.split-tag.outputs.version }}
+          title: Zimbra ${{ steps.split-tag.outputs.version }} FOSS Builds ( ${{ matrix.distro.fullname }} )
+          body: |
+            category: recent
+            **Want to download?** Please use: [Maldua’s Zimbra Foss Builds Downloads Page](https://maldua.github.io/zimbra-foss/downloads.html) instead. It's much easier to read and understand.
+            **WARNING:** This is an automated build. You can give us some feedback about it either on the [issues page](https://github.com/maldua/zimbra-foss-builder/issues) or in the [Zimbra forums thread](https://forums.zimbra.org/viewtopic.php?t=72655).
+
+            Main instructions that were used in order to make this build possible:
+            ```
+            ${{ steps.zimbra-builder.outputs.commands }}
+            ```
+          files: |
+            ${{ steps.tgz-release.outputs.filename }}
+            ${{ steps.tgz-release.outputs.filename }}.md5
+            ${{ steps.tgz-release.outputs.filename }}.sha256
