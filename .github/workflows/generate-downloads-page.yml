@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: git_clone
     steps:
+
       - name: Simple Date
         id: simple-date
         run: echo "date=$(date '+%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
@@ -30,7 +31,7 @@ jobs:
 
       - name: Update downloads page
         run: |
-          cd ${{ github.workspace }}/download-pages
+          cd ${{ github.workspace }}/docs/download-pages
           GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} ./generate-downloads-page.py
 
       - name: Push updates to publish-downloads-dev
@@ -38,6 +39,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -B publish-downloads-dev
+
+          # Copy generated files from docs/download-pages to docs/
+          cp docs/download-pages/downloads.md docs/
+          cp docs/download-pages/advanced-downloads.md docs/
+          cp docs/download-pages/README.md docs/
+
+          # Add & commit changes
           git add docs/downloads.md docs/advanced-downloads.md docs/README.md
           git commit -m "downloads.md automatically regenerated at ${{ steps.simple-date.outputs.date }}" || echo "No changes to commit"
           git push origin publish-downloads-dev --force
