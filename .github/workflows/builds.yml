@@ -17,10 +17,6 @@ jobs:
     strategy:
       matrix:
         distro:
-          - name: ubuntu-18.04
-            docker_tag: ghcr.io/maldua/zimbra-foss:docker-ubuntu-18.04-v0.0.1
-            build_dir_prefix: UBUNTU18_64
-            fullname: Ubuntu 18.04
           - name: ubuntu-20.04
             docker_tag: ghcr.io/maldua/zimbra-foss:docker-ubuntu-20.04-v0.0.1
             build_dir_prefix: UBUNTU20_64
@@ -29,10 +25,6 @@ jobs:
             docker_tag: ghcr.io/maldua/zimbra-foss:docker-ubuntu-22.04-v0.0.1
             build_dir_prefix: UBUNTU22_64
             fullname: Ubuntu 22.04
-          - name: rhel-7
-            docker_tag: ghcr.io/maldua/zimbra-foss:docker-rhel-7-v0.0.1
-            build_dir_prefix: RHEL7_64
-            fullname: RHEL 7
           - name: rhel-8
             docker_tag: ghcr.io/maldua/zimbra-foss:docker-rhel-8-v0.0.1
             build_dir_prefix: RHEL8_64
