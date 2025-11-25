@@ -1,4 +1,4 @@
-name: docker
+name: docker-rhel-9
 
 on:
   push:
