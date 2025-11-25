@@ -3,7 +3,7 @@ name: release-zimbra-with-pimbra-all
 on:
   push:
     tags:
-      - builds-with-zimbra/*
+      - builds-with-pimbra/*
 
 env:
   ZIMBRA_BUILDER_ID: 420
@@ -127,7 +127,7 @@ jobs:
           repo_token: ${{ github.token }}
           prerelease: false
           generate_notes: false
-          automatic_release_tag: zimbra-foss-build-builds-with-zimbra/${{ steps.split-tag.outputs.version }}
+          automatic_release_tag: zimbra-foss-build-builds-with-pimbra/${{ steps.split-tag.outputs.version }}
           title: Zimbra ${{ steps.split-tag.outputs.version }} FOSS Builds ( ${{ matrix.distro.fullname }} )
           body: |
             category: recent
