@@ -1,4 +1,4 @@
-name: docker
+name: docker-{{NAME_SHORT}}
 
 on:
   push:
