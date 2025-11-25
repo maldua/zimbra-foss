@@ -1,4 +1,4 @@
-name: docker
+name: docker-ubuntu-18.04
 
 on:
   push:
