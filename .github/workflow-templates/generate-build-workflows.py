@@ -11,7 +11,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Map template filename → tag prefix pattern
 TEMPLATE_TAG_PREFIX = {
     "builds.yml": "builds-{{NAME_SHORT}}",
-    "builds-with-zimbra.yml": "builds-with-pimbra-{{NAME_SHORT}}",
+    "builds-with-pimbra.yml": "builds-with-pimbra-{{NAME_SHORT}}",
     "docker-builds.yml": "docker-builds-{{NAME_SHORT}}"
 }
 
@@ -85,9 +85,9 @@ def main():
             output_file = generate_workflow(template_content, distro, OUTPUT_DIR, tag_prefix_template)
             print(f"Generated workflow: {output_file}")
 
-        # Generate matrix workflow only for builds.yml and builds-with-zimbra.yml
-        if template_file in ["builds.yml", "builds-with-zimbra.yml"]:
-            matrix_tag_prefix = "builds" if template_file == "builds.yml" else "builds-with-zimbra"
+        # Generate matrix workflow only for builds.yml and builds-with-pimbra.yml
+        if template_file in ["builds.yml", "builds-with-pimbra.yml"]:
+            matrix_tag_prefix = "builds" if template_file == "builds.yml" else "builds-with-pimbra"
             output_file = template_file  # matrix workflow overwrites template filename
             output_file_path = generate_matrix_workflow(template_content, output_file, distros, matrix_tag_prefix)
             print(f"Generated matrix workflow: {output_file_path}")
