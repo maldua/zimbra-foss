@@ -1,0 +1,44 @@
+name: docker-ubuntu-20.04
+
+on:
+  push:
+    tags:
+      - docker-builds-ubuntu-20.04/*
+
+env:
+  IMAGE_FQDN: ghcr.io/maldua/zimbra-foss
+
+jobs:
+  publish-zimbra-foss-builder-image:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distro:
+          - name: Ubuntu 20.04
+            version: 20.04
+            tag_prefix: docker-builds-ubuntu-20.04
+            dockerfile: Dockerfiles/github/ubuntu-20.04/Dockerfile
+            distro_family: ubuntu
+
+    name: Build and push Docker for Ubuntu 20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Split branch name
+        env:
+          BRANCH: ${{ github.ref_name }}
+        id: split-tag
+        run: echo "version=${BRANCH##*/}" >> $GITHUB_OUTPUT
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: zimbra-foss-builder Docker image
+        run: |
+          docker build --tag ${{ env.IMAGE_FQDN }}:docker-${{ matrix.distro.distro_family }}-${{ matrix.distro.version }}-${{ steps.split-tag.outputs.version }} . -f ${{ matrix.distro.dockerfile }}
+          docker push ${{ env.IMAGE_FQDN }}:docker-${{ matrix.distro.distro_family }}-${{ matrix.distro.version }}-${{ steps.split-tag.outputs.version }}
