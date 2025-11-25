@@ -20,8 +20,7 @@ jobs:
             dockerfile: {{DOCKERFILE}}
             distro_family: {{DISTRO_FAMILY}}
 
-    name: Build and push Docker for ${{ matrix.distro.name }}
-    if: startsWith(github.ref, format('refs/tags/{0}', matrix.distro.tag_prefix))
+    name: Build and push Docker for {{NAME}}
 
     steps:
       - uses: actions/checkout@v2
