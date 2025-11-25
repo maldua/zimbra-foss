@@ -1,14 +1,5 @@
 [
   {
-    "name": "Ubuntu 18.04",
-    "docker_tag": "ghcr.io/maldua/zimbra-foss:docker-ubuntu-18.04-v0.0.1",
-    "build_dir_prefix": "UBUNTU18_64",
-    "tag_prefix": "builds-ubuntu-18.04",
-    "fullname": "Ubuntu 18.04",
-    "version": "18.04",
-    "dockerfile": "Dockerfiles/github/ubuntu-18.04/Dockerfile"
-  },
-  {
     "name": "Ubuntu 20.04",
     "docker_tag": "ghcr.io/maldua/zimbra-foss:docker-ubuntu-20.04-v0.0.1",
     "build_dir_prefix": "UBUNTU20_64",
@@ -27,15 +18,6 @@
     "version": "22.04",
     "dockerfile": "Dockerfiles/github/ubuntu-22.04/Dockerfile",
     "distro_family": "ubuntu"
-  },
-  {
-    "name": "RHEL 7",
-    "docker_tag": "ghcr.io/maldua/zimbra-foss:docker-rhel-7-v0.0.1",
-    "build_dir_prefix": "RHEL7_64",
-    "tag_prefix": "builds-rhel-7",
-    "fullname": "RHEL 7",
-    "version": "7",
-    "dockerfile": "Dockerfiles/github/rhel-7/Dockerfile"
   },
   {
     "name": "RHEL 8",
