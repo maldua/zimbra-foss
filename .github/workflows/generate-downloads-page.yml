@@ -8,9 +8,12 @@ on:
 jobs:
   downloads-page:
     runs-on: ubuntu-latest
-    environment: git_clone
+
     steps:
 
+      # -----------------------------
+      # Metadata
+      # -----------------------------
       - name: Simple Date
         id: simple-date
         run: echo "date=$(date '+%Y-%m-%d %H:%M')" >> $GITHUB_OUTPUT
@@ -23,29 +26,56 @@ jobs:
       - name: Install Python dependencies
         run: python -m pip install --upgrade pip requests
 
-      - name: Check out the tag
+      # -----------------------------
+      # Checkout current tag → current/
+      # -----------------------------
+      - name: Checkout current tag into current/
         uses: actions/checkout@v4
         with:
+          path: current
           ref: ${{ github.ref }}
-          fetch-depth: 0  # fetch all history so we can push later
+          fetch-depth: 0
 
-      - name: Update downloads page
+      # -----------------------------
+      # Build docs using the current tag
+      # -----------------------------
+      - name: Build documentation (make.py)
         run: |
-          cd ${{ github.workspace }}/docs/download-pages
-          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} ./generate-downloads-page.py
+          cd current/docs-pages
+          python3 make.py
 
-      - name: Push updates to publish-downloads-dev
+      # -----------------------------
+      # Create orphan branch in a temp folder
+      # -----------------------------
+      - name: Prepare orphan branch with only docs/
         run: |
+          # Clone empty temp repo
+          rm -rf temp_publish
+          mkdir temp_publish
+          cd temp_publish
+          git init
+
+          # Configure Git user
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -B publish-downloads-dev
 
-          # Copy generated files from docs/download-pages to docs/
-          cp docs/download-pages/downloads.md docs/
-          cp docs/download-pages/advanced-downloads.md docs/
-          cp docs/download-pages/README.md docs/
+          # Add remote and fetch orphan branch
+          git remote add origin ${{ github.repositoryUrl }}
+          git fetch origin
 
-          # Add & commit changes
-          git add docs/downloads.md docs/advanced-downloads.md docs/README.md
-          git commit -m "downloads.md automatically regenerated at ${{ steps.simple-date.outputs.date }}" || echo "No changes to commit"
+          # Create orphan branch
+          git checkout --orphan publish-downloads-dev
+
+          # Remove any files that might exist
+          git rm -rf .
+
+          # Copy the docs folder
+          cp -R ../current/docs ./docs
+
+          # Remove .gitignore in docs if it exists
+          rm -f docs/.gitignore
+
+          # Commit and push
+          git add docs
+          git commit -m "Docs automatically regenerated at ${{ steps.simple-date.outputs.date }}"
           git push origin publish-downloads-dev --force
