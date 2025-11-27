@@ -5,7 +5,8 @@ import subprocess
 
 # Paths
 SRC_DIR = os.path.abspath(os.path.dirname(__file__))
-DEST_DIR = os.path.join(SRC_DIR, "docs")
+PARENT_DIR = os.path.join(SRC_DIR, "..")
+DEST_DIR = os.path.join(PARENT_DIR, "docs")
 DOWNLOADS_DIR = os.path.join(SRC_DIR, "downloads")
 
 # Step 1: Copy all files/folders except downloads
