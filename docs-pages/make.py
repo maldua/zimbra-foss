@@ -18,6 +18,8 @@ for item in os.listdir(SRC_DIR):
     d = os.path.join(DEST_DIR, item)
     if item == "downloads":
         continue
+    if item == "make.py":
+        continue
     if os.path.isdir(s):
         shutil.copytree(s, d, dirs_exist_ok=True)
     else:
