@@ -62,7 +62,7 @@ jobs:
 
           # Add remote and fetch orphan branch
           git remote add origin ${{ github.repositoryUrl }}
-          git fetch origin
+          # optional: git fetch origin publish-downloads-dev
 
           # Create orphan branch
           git checkout --orphan publish-downloads-dev
