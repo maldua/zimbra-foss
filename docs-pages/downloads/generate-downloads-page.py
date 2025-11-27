@@ -21,10 +21,21 @@ EXPERIMENTAL_ICON = "\U0001F9EC"
 OTHER_ICON = "\U0001F5C2\ufe0f"
 EMPTY_ICON = "\u2205"
 
-simple_downloads_md='downloads.md'
-downloads_md='advanced-downloads.md'
-templatesDir='templates'
-imagesDir="images"
+# Resolve output directory: we are running from docs-pages/downloads
+PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+GRAND_PARENT_DIR = os.path.abspath(os.path.join(PARENT_DIR, ".."))
+DOCS_DIR = os.path.join(GRAND_PARENT_DIR, "docs")
+DOWNLOADS_OUTPUT_DIR = os.path.join(DOCS_DIR, "downloads")
+os.makedirs(DOWNLOADS_OUTPUT_DIR, exist_ok=True)
+
+# Write output into docs/
+simple_downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "README.md")
+downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "advanced.md")
+
+# templates/ and images/ remain relative to current folder
+templatesDir = 'templates'
+imagesDir = "images"
+
 repoReleasesApiUrl="https://api.github.com/repos/maldua/zimbra-foss/releases"
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
@@ -439,3 +450,12 @@ def writeSimpleDownloadsPage(downloads_md):
 
 writeAdvancedDownloadsPage(downloads_md)
 writeSimpleDownloadsPage(simple_downloads_md)
+
+# Copy images/ folder into docs/
+src_images = os.path.join(os.path.dirname(__file__), "images")
+dst_images = os.path.join(DOWNLOADS_OUTPUT_DIR, "images")
+
+if os.path.isdir(dst_images):
+    shutil.rmtree(dst_images)
+
+shutil.copytree(src_images, dst_images)
