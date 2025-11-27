@@ -22,8 +22,9 @@ OTHER_ICON = "\U0001F5C2\ufe0f"
 EMPTY_ICON = "\u2205"
 
 # Resolve output directory: we are running from docs-pages/downloads
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-DOCS_DIR = os.path.join(BASE_DIR, "docs")
+PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+GRAND_PARENT_DIR = os.path.abspath(PARENT_DIR, ".."))
+DOCS_DIR = os.path.join(GRAND_PARENT_DIR, "docs")
 DOWNLOADS_OUTPUT_DIR = os.path.join(DOCS_DIR, "downloads")
 os.makedirs(DOWNLOADS_OUTPUT_DIR, exist_ok=True)
 
