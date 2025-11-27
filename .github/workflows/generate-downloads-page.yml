@@ -61,7 +61,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Add remote and fetch orphan branch
-          git remote add origin ${{ github.repositoryUrl }}
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           # optional: git fetch origin publish-downloads-dev
 
           # Create orphan branch
