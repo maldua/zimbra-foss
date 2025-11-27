@@ -29,8 +29,8 @@ DOWNLOADS_OUTPUT_DIR = os.path.join(DOCS_DIR, "downloads")
 os.makedirs(DOWNLOADS_OUTPUT_DIR, exist_ok=True)
 
 # Write output into docs/
-simple_downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "downloads.md")
-downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "advanced-downloads.md")
+simple_downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "index.md")
+downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "advanced.md")
 
 # templates/ and images/ remain relative to current folder
 templatesDir = 'templates'

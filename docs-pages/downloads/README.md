@@ -1,3 +1,3 @@
 # Downloads - README
 
-- [Downloads page](downloads.md)
+- [Downloads page](downloads/)
