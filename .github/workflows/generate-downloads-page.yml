@@ -67,8 +67,8 @@ jobs:
           # Create orphan branch
           git checkout --orphan publish-downloads-dev
 
-          # Remove any files that might exist
-          git rm -rf .
+          # Remove any files if they exist (optional, ignore error)
+          git rm -rf . || true
 
           # Copy the docs folder
           cp -R ../current/docs ./docs
