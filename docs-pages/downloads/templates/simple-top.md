@@ -19,6 +19,6 @@ You can subscribe to (you need to be logged in Github so that the Subscribe butt
 
 ---
 
-You can find 🧪 recent/testing, 🧬 experimental/beta in addition to 🗂️ older releases at [⬇️ Advanced Downloads](advanced-downloads.md).
+You can find 🧪 recent/testing, 🧬 experimental/beta in addition to 🗂️ older releases at [⬇️ Advanced Downloads](advanced.md).
 
 ---
