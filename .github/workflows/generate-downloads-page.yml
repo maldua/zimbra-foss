@@ -43,7 +43,7 @@ jobs:
       - name: Build documentation (make.py)
         run: |
           cd current/docs-pages
-          python3 make.py
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} python3 make.py
 
       # -----------------------------
       # Create orphan branch in a temp folder
