@@ -1,2 +1,5 @@
-docs/*
-!docs/.gitignore
+# Ignore everything in this folder
+*
+
+# Except this .gitignore file
+!.gitignore
