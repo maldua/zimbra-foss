@@ -17,7 +17,7 @@ Maldua's Zimbra FOSS is a community-driven, open-source build of the Zimbra Coll
 | 10.1.10.p3 | Ubuntu 22.04 | Stable, may include Pimbra patches |
 | 10.0.16.p3 | RHEL 8 | Stable, may include Pimbra patches |
 
-Visit [Zimbra Foss Downloads Page (from Maldua)](https://maldua.github.io/zimbra-foss/downloads.html) for the full **updated** list.
+Visit [Zimbra Foss Downloads Page (from Maldua)](https://maldua.github.io/zimbra-foss/downloads/) for the full **updated** list.
 
 ---
 
