@@ -20,6 +20,26 @@ RECENT_ICON = "\U0001F9EA"
 EXPERIMENTAL_ICON = "\U0001F9EC"
 OTHER_ICON = "\U0001F5C2\ufe0f"
 EMPTY_ICON = "\u2205"
+ARCHIVE_ICON = "\U0001F5C4"
+
+# Global variables
+header_links_mapping = {
+    "main": "README.md",
+    "stable": "stable.md",
+    "recent": "recent.md",
+    "experimental": "experimental.md",
+    "other": "other.md",
+    "archive": "archive.md",
+}
+
+shortNamesLabels = {
+    "main": "Main",
+    "stable": f"{STABLE_ICON} Stable {STABLE_ICON}",
+    "recent": f"{RECENT_ICON} Recent {RECENT_ICON}",
+    "experimental": f"{EXPERIMENTAL_ICON} Experimental {EXPERIMENTAL_ICON}",
+    "other": f"{OTHER_ICON} Other {OTHER_ICON}",
+    "archive": f"{ARCHIVE_ICON} Archive {ARCHIVE_ICON}"
+}
 
 # Resolve output directory: we are running from docs-pages/downloads
 PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -29,8 +49,12 @@ DOWNLOADS_OUTPUT_DIR = os.path.join(DOCS_DIR, "downloads")
 os.makedirs(DOWNLOADS_OUTPUT_DIR, exist_ok=True)
 
 # Write output into docs/
-simple_downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "README.md")
-downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "advanced.md")
+main_downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "README.md")
+archive_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "archive.md")
+stable_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "stable.md")
+recent_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "recent.md")
+experimental_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "experimental.md")
+other_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "other.md")
 
 # templates/ and images/ remain relative to current folder
 templatesDir = 'templates'
@@ -362,6 +386,11 @@ def outputNewHLine(downloads_md):
     outfile.write('---')
     outfile.write('\n')
 
+def outputBlockNewLine(downloads_md, block):
+  with open(downloads_md, 'a') as outfile:
+    outfile.write(block)
+    outfile.write('\n')
+
 # Get the main releasesMatrix with all of the releases information
 releasesMatrix = getReleasesMatrix()
 
@@ -396,47 +425,106 @@ experimentalVersionTags = orderedAndUniqueVersionTags (experimentalVersionTags)
 otherVersionTags = getVersionTags (otherReleasesMatrix)
 otherVersionTags = orderedAndUniqueVersionTags (otherVersionTags)
 
+def generate_downloads_header(current_idCategory):
+    """
+    Generate a markdown header menu for Zimbra downloads with the current category highlighted.
+
+    Args:
+        current_idCategory (str): The category to highlight (e.g., 'stable', 'recent').
+
+    Returns:
+        str: Markdown string for the header menu.
+    """
+    prefix = "Maldua's Zimbra Foss Downloads: "
+    postfix = " ( Learn more at: [Maldua's Zimbra Foss](../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
+    menu_items = []
+    for idCat, file in header_links_mapping.items():
+        label = shortNamesLabels.get(idCat, idCat.capitalize())
+        item = f"[{label}]({file})"
+        if idCat == current_idCategory:
+            item = f"**{item}**"
+        menu_items.append(item)
+
+    # Join menu items with separator
+    return ( prefix + " | ".join(menu_items) + postfix )
+
+def renderCategoryBlock(
+    downloads_md,
+    top_template,
+    versionTags,
+    releasesMatrix,
+    shortName
+):
+    outputNewLine(downloads_md)
+    append_files(templatesDir + "/" + top_template, downloads_md)
+    append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
+    append_files(templatesDir + "/" + "downloads-subscribe.md", downloads_md)
+
+    outputSection(
+        downloads_md=downloads_md,
+        versionTags=versionTags,
+        releasesMatrix=releasesMatrix,
+        shortName=shortName
+    )
+
 def writeAdvancedDownloadsPage(downloads_md):
-  # Empty our output file
-  if (os.path.isfile(downloads_md)):
-    os.remove(downloads_md)
+    # Empty our output file
+    if os.path.isfile(downloads_md):
+        os.remove(downloads_md)
 
-  # Write the different sections as needed
+    header = generate_downloads_header("archive")
+    outputBlockNewLine(downloads_md, header)
 
-  append_files(templatesDir + "/" + "downloads-top.md", downloads_md)
-  append_files(templatesDir + "/" + "downloads-index.md", downloads_md)
+    # Initial structure
+    append_files(templatesDir + "/" + "downloads-top.md", downloads_md)
+    append_files(templatesDir + "/" + "downloads-index.md", downloads_md)
 
-  outputNewLine(downloads_md)
-  append_files(templatesDir + "/" + "stable-releases-top.md", downloads_md)
-  append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
-  append_files(templatesDir + "/" + "downloads-subscribe.md", downloads_md)
-  outputSection(downloads_md=downloads_md, versionTags=stableVersionTags, releasesMatrix=stableReleasesMatrix, shortName=f"{STABLE_ICON} Stable {STABLE_ICON}")
+    # Stable section
+    renderCategoryBlock(
+        downloads_md=downloads_md,
+        top_template="stable-releases-top.md",
+        versionTags=stableVersionTags,
+        releasesMatrix=stableReleasesMatrix,
+        shortName=f"{STABLE_ICON} Stable {STABLE_ICON}"
+    )
 
-  outputNewLine(downloads_md)
-  append_files(templatesDir + "/" + "recent-releases-top.md", downloads_md)
-  append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
-  append_files(templatesDir + "/" + "downloads-subscribe.md", downloads_md)
-  outputSection(downloads_md=downloads_md, versionTags=recentVersionTags, releasesMatrix=recentReleasesMatrix, shortName=f"{RECENT_ICON} Recent {RECENT_ICON}")
+    # Recent section
+    renderCategoryBlock(
+        downloads_md=downloads_md,
+        top_template="recent-releases-top.md",
+        versionTags=recentVersionTags,
+        releasesMatrix=recentReleasesMatrix,
+        shortName=f"{RECENT_ICON} Recent {RECENT_ICON}"
+    )
 
-  outputNewLine(downloads_md)
-  append_files(templatesDir + "/" + "experimental-releases-top.md", downloads_md)
-  append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
-  append_files(templatesDir + "/" + "downloads-subscribe.md", downloads_md)
-  outputSection(downloads_md=downloads_md, versionTags=experimentalVersionTags, releasesMatrix=experimentalReleasesMatrix, shortName=f"{EXPERIMENTAL_ICON} Experimental {EXPERIMENTAL_ICON}")
+    # Experimental section
+    renderCategoryBlock(
+        downloads_md=downloads_md,
+        top_template="experimental-releases-top.md",
+        versionTags=experimentalVersionTags,
+        releasesMatrix=experimentalReleasesMatrix,
+        shortName=f"{EXPERIMENTAL_ICON} Experimental {EXPERIMENTAL_ICON}"
+    )
 
-  outputNewLine(downloads_md)
-  append_files(templatesDir + "/" + "other-releases-top.md", downloads_md)
-  append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
-  append_files(templatesDir + "/" + "downloads-subscribe.md", downloads_md)
-  outputSection(downloads_md=downloads_md, versionTags=otherVersionTags, releasesMatrix=otherReleasesMatrix, shortName=f"{OTHER_ICON} Recent {OTHER_ICON}")
+    # Other section
+    renderCategoryBlock(
+        downloads_md=downloads_md,
+        top_template="other-releases-top.md",
+        versionTags=otherVersionTags,
+        releasesMatrix=otherReleasesMatrix,
+        shortName=f"{OTHER_ICON} Recent {OTHER_ICON}"
+    )
 
-  outputNewLine(downloads_md)
-  append_files(templatesDir + "/" + "downloads-index.md", downloads_md)
+    outputNewLine(downloads_md)
+    append_files(templatesDir + "/" + "downloads-index.md", downloads_md)
 
 def writeSimpleDownloadsPage(downloads_md):
   # Empty our output file
   if (os.path.isfile(downloads_md)):
     os.remove(downloads_md)
+
+  header = generate_downloads_header("main")
+  outputBlockNewLine(downloads_md, header)
 
   # Write the different sections as needed
 
@@ -448,8 +536,87 @@ def writeSimpleDownloadsPage(downloads_md):
   outputNewHLine(downloads_md)
   append_files(templatesDir + "/" + "simple-top.md", downloads_md)
 
-writeAdvancedDownloadsPage(downloads_md)
-writeSimpleDownloadsPage(simple_downloads_md)
+def writeCategoryDownloadsPage(
+    downloads_md,
+    top_template,
+    versionTags,
+    releasesMatrix,
+    shortName,
+    idCategory
+):
+    # Empty output file
+    if os.path.isfile(downloads_md):
+        os.remove(downloads_md)
+
+    # Common header for all category pages
+    categoryHeader = generate_downloads_header(idCategory)
+    outputBlockNewLine(downloads_md, categoryHeader)
+
+    outputNewLine(downloads_md)
+
+    # Category-specific header
+    append_files(templatesDir + "/" + top_template, downloads_md)
+    append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
+    append_files(templatesDir + "/" + f"category-{idCategory}-subscribe.md", downloads_md)
+
+    # The actual section
+    outputSection(
+        downloads_md=downloads_md,
+        versionTags=versionTags,
+        releasesMatrix=releasesMatrix,
+        shortName=shortName
+    )
+
+    outputNewLine(downloads_md)
+    append_files(templatesDir + "/" + "downloads-top.md", downloads_md)
+
+def writeStableDownloadsPage(downloads_md):
+    writeCategoryDownloadsPage(
+        downloads_md=downloads_md,
+        top_template="stable-releases-top.md",
+        versionTags=stableVersionTags,
+        releasesMatrix=stableReleasesMatrix,
+        shortName=shortNamesLabels.get("stable"),
+        idCategory="stable"
+    )
+
+def writeRecentDownloadsPage(downloads_md):
+    writeCategoryDownloadsPage(
+        downloads_md=downloads_md,
+        top_template="recent-releases-top.md",
+        versionTags=recentVersionTags,
+        releasesMatrix=recentReleasesMatrix,
+        shortName=shortNamesLabels.get("recent"),
+        idCategory="recent"
+    )
+
+def writeExperimentalDownloadsPage(downloads_md):
+    writeCategoryDownloadsPage(
+        downloads_md=downloads_md,
+        top_template="experimental-releases-top.md",
+        versionTags=experimentalVersionTags,
+        releasesMatrix=experimentalReleasesMatrix,
+        shortName=shortNamesLabels.get("experimental"),
+        idCategory="experimental"
+    )
+
+def writeOtherDownloadsPage(downloads_md):
+    writeCategoryDownloadsPage(
+        downloads_md=downloads_md,
+        top_template="other-releases-top.md",
+        versionTags=otherVersionTags,
+        releasesMatrix=otherReleasesMatrix,
+        shortName=shortNamesLabels.get("other"),
+        idCategory="other"
+    )
+
+writeAdvancedDownloadsPage(archive_md)
+writeSimpleDownloadsPage(main_downloads_md)
+
+writeStableDownloadsPage(stable_md)
+writeRecentDownloadsPage(recent_md)
+writeExperimentalDownloadsPage(experimental_md)
+writeOtherDownloadsPage(other_md)
 
 # Copy images/ folder into docs/
 src_images = os.path.join(os.path.dirname(__file__), "images")

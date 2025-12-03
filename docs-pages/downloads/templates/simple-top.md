@@ -6,19 +6,3 @@
 - **MALDUA'S Zimbra FOSS Builds** brought to you by [BTACTIC, open source & cloud solutions](https://www.btactic.com).
 
 These **stable releases** below are the **latest** releases that were made public in [Maldua's Zimbra FOSS Builds - Share your feedback - Zimbra Forums thread](https://forums.zimbra.org/viewtopic.php?t=72655) and after 15 days of being public there has not been any major negative feedback.
-
----
-
-### Want to be noticed when there is a new release?
-
-You can subscribe to (you need to be logged in Github so that the Subscribe button appears):
-
-- 📬 [Stable Releases announcements](https://github.com/maldua/zimbra-foss-builder/discussions/8) 📬
-- 📬 [Recent/Testing Releases announcements](https://github.com/maldua/zimbra-foss-builder/discussions/9) 📬
-- 📬 [Experimental/Beta Releases announcements](https://github.com/maldua/zimbra-foss-builder/discussions/10) 📬
-
----
-
-You can find 🧪 recent/testing, 🧬 experimental/beta in addition to 🗂️ older releases at [⬇️ Advanced Downloads](advanced.md).
-
----
