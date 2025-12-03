@@ -436,7 +436,7 @@ def generate_downloads_header(current_idCategory):
         str: Markdown string for the header menu.
     """
     prefix = "Maldua's Zimbra Foss Downloads: "
-    postfix = " ( Learn more at: [Maldua's Zimbra Foss](../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
+    postfix = " | ( Learn more at: [Maldua's Zimbra Foss](../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
     menu_items = []
     for idCat, file in header_links_mapping.items():
         label = shortNamesLabels.get(idCat, idCat.capitalize())
@@ -446,7 +446,7 @@ def generate_downloads_header(current_idCategory):
         menu_items.append(item)
 
     # Join menu items with separator
-    return ( prefix + " | ".join(menu_items) + postfix )
+    return ( prefix + " \\| ".join(menu_items) + postfix )
 
 def renderCategoryBlock(
     downloads_md,
