@@ -615,8 +615,9 @@ def writeCategoryDownloadsPage(
         shortName=shortName
     )
 
-    outputNewLine(downloads_md)
-    append_files(templatesDir + "/" + "downloads-top.md", downloads_md)
+    outputNewHLine(downloads_md)
+    categoryHeader = generate_downloads_header(idCategory)
+    outputBlockNewLine(downloads_md, categoryHeader)
 
 def writeStableDownloadsPage(downloads_md):
     writeCategoryDownloadsPage(
