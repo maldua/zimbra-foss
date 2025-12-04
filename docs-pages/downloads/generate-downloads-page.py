@@ -24,6 +24,7 @@ EMPTY_ICON = "\u2205"
 ARCHIVE_ICON = "\U0001F5C4"
 LATEST_ICON = "\U0001F195"
 LATEST_PER_PLATFORM_ICON = "\U0001F4F0"
+LATEST_PER_FAMILY_ICON = "\U0001F4CB"
 
 # Global variables
 header_links_mapping = {
@@ -34,6 +35,7 @@ header_links_mapping = {
     "other": "other.md",
     "latest": "latest.md",
     "latest_per_platform": "latest-per-platform.md",
+    "latest_per_family": "latest-per-zimbra-family.md",
     "archive": "archive.md"
 }
 
@@ -45,7 +47,8 @@ shortNamesLabels = {
     "other": f"{OTHER_ICON} Other {OTHER_ICON}",
     "archive": f"{ARCHIVE_ICON} Archive {ARCHIVE_ICON}",
     "latest": f"{LATEST_ICON} Latest {LATEST_ICON}",
-    "latest_per_platform": f"{LATEST_PER_PLATFORM_ICON} Latest per Platform {LATEST_PER_PLATFORM_ICON}"
+    "latest_per_platform": f"{LATEST_PER_PLATFORM_ICON} Latest per Platform {LATEST_PER_PLATFORM_ICON}",
+    "latest_per_family": f"{LATEST_PER_FAMILY_ICON} Latest per Zimbra Family {LATEST_PER_FAMILY_ICON}"
 }
 
 # Resolve output directory: we are running from docs-pages/downloads
@@ -64,6 +67,7 @@ experimental_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "experimental.md")
 other_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "other.md")
 latest_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "latest.md")
 latest_per_platform_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "latest-per-platform.md")
+latest_per_family_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "latest-per-zimbra-family.md")
 
 # templates/ and images/ remain relative to current folder
 templatesDir = 'templates'
@@ -275,6 +279,34 @@ def getLatestVersionTagsByDistro(releasesMatrix, distroLongName, limit=2):
     # Sort by build date descending
     version_sorted = sorted(version_with_latest, key=lambda t: t[1], reverse=True)
     return [t[0] for t in version_sorted[:limit]]
+
+def getZimbraFamily(versionTag):
+    """
+    Compute Zimbra family from versionTag.
+    Examples:
+        10.1.9 -> 10.1
+        10.1.10.p6 -> 10.1
+        10.0.5 -> 10.0
+        9.0.0.p5 -> 9.0
+        8.8.15.p46 -> 8.8
+    """
+    # Match major.minor
+    match = re.match(r'^(\d+\.\d+)', versionTag)
+    if match:
+        return match.group(1)
+    return versionTag
+
+def family_to_label(family: str) -> str:
+    """
+    Convert a numeric family string to its display label.
+    """
+    if family == "9.0":
+        return "9.0.0.pX"
+    elif family == "8.8":
+        return "8.8.15.pX"
+    else:
+        # Default fallback: keep family.x
+        return f"{family}.x"
 
 def filterByCategory(matrix, category):
   newMatrix = []
@@ -784,6 +816,71 @@ def writeLatestPerPlatformDownloadsPage(downloads_md):
     header = generate_downloads_header("latest_per_platform")
     outputBlockNewLine(downloads_md, header)
 
+def writeLatestPerFamilyDownloadsPage(downloads_md):
+    """
+    Generate 'latest-per-zimbra-family.md':
+    - Shows latest 2 versionTags per Zimbra family
+    - Adds index at top with links to each family
+    - Sorted by family descending
+    """
+    # Remove old file
+    if os.path.isfile(downloads_md):
+        os.remove(downloads_md)
+
+    header = generate_downloads_header("latest_per_family")
+    outputBlockNewLine(downloads_md, header)
+
+    # Build mapping family -> list of versionTags
+    familyBuckets = {}
+    for row in releasesMatrix:
+        family = getZimbraFamily(row["versionTag"])
+        if family not in familyBuckets:
+            familyBuckets[family] = set()
+        familyBuckets[family].add(row["versionTag"])
+
+    # Convert to sorted list (newest first)
+    familyBucketsSorted = {}
+    for family, tags in familyBuckets.items():
+        orderedTags = orderedAndUniqueVersionTags(list(tags))
+        familyBucketsSorted[family] = orderedTags[:2]  # latest 2 per family
+
+    # Sort families descending
+    sortedFamilies = sorted(
+        familyBucketsSorted.keys(),
+        key=lambda fam: float(fam),
+        reverse=True
+    )
+
+    # --- Generate index ---
+    index_lines = ["## Index\n"]
+    for family in sortedFamilies:
+        label = family_to_label(family)
+        anchor = label.replace(".", "-").lower()
+        index_lines.append(f"- [Zimbra {label}](#zimbra-{anchor})")
+    outputBlockNewLine(downloads_md, "\n".join(index_lines))
+    outputNewLine(downloads_md)
+
+    # --- Generate sections ---
+    for family in sortedFamilies:
+        outputNewHLine(downloads_md)
+        label = family_to_label(family)
+        anchor = label.replace(".", "-").lower()
+        outputBlockNewLine(downloads_md, f"\n## Zimbra {label} {{#zimbra-{anchor}}}\n")
+
+        for versionTag in familyBucketsSorted[family]:
+            filteredMatrix = filterByVersionTag(releasesMatrix, versionTag)
+            category = filteredMatrix[0]["category"]
+            shortName = f"{shortNamesLabels.get(category, category)}"
+            outputSection(downloads_md, [versionTag], filteredMatrix, shortName)
+
+    outputNewLine(downloads_md)
+    outputBlockNewLine(downloads_md, "\n".join(index_lines))
+    outputNewLine(downloads_md)
+
+    outputNewLine(downloads_md)
+    header = generate_downloads_header("latest_per_family")
+    outputBlockNewLine(downloads_md, header)
+
 writeAdvancedDownloadsPage(archive_md)
 writeSimpleDownloadsPage(main_downloads_md)
 
@@ -793,6 +890,7 @@ writeExperimentalDownloadsPage(experimental_md)
 writeOtherDownloadsPage(other_md)
 writeLatestDownloadsPage(latest_md)
 writeLatestPerPlatformDownloadsPage(latest_per_platform_md)
+writeLatestPerFamilyDownloadsPage(latest_per_family_md)
 
 # Copy images/ folder into docs/
 src_images = os.path.join(os.path.dirname(__file__), "images")
