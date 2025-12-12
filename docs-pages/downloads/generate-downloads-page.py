@@ -35,7 +35,7 @@ MENU_GROUPS = {
 
 # Global variables
 header_links_mapping = {
-    "main": "README.md",
+    "main": "index.md",
     "stable": "stable.md",
     "recent": "recent.md",
     "experimental": "experimental.md",
