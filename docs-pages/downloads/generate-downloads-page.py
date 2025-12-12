@@ -588,7 +588,7 @@ def generate_downloads_header(current_idCategory, url_prefix="", title=""):
         rows.append(row_md)
 
     # Combine into final markdown block
-    return "#" + prefix + "\n" + "\n" + "\n".join(rows) + "\n" + postfix
+    return "# " + prefix + "\n" + "\n" + "\n".join(rows) + "\n" + postfix
 
 def renderCategoryBlock(
     downloads_md,
