@@ -465,7 +465,7 @@ title: {title} - Zimbra Foss Downloads (from Maldua)
 description: {title} - {description} - Zimbra Foss Downloads (from Maldua)
 ---
 
-        ''')
+''')
 
 def outputSection(downloads_md, versionTags, releasesMatrix, shortName, url_prefix=""):
   if not releasesMatrix:
