@@ -64,6 +64,8 @@ GRAND_PARENT_DIR = os.path.abspath(os.path.join(PARENT_DIR, ".."))
 DOCS_DIR = os.path.join(GRAND_PARENT_DIR, "docs")
 DOWNLOADS_OUTPUT_DIR = os.path.join(DOCS_DIR, "downloads")
 os.makedirs(DOWNLOADS_OUTPUT_DIR, exist_ok=True)
+VERSION_DIR = os.path.join(DOWNLOADS_OUTPUT_DIR, "version")
+os.makedirs(VERSION_DIR, exist_ok=True)
 
 # Write output into docs/
 main_downloads_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "README.md")
@@ -93,17 +95,17 @@ def sizeof_fmt(num, suffix="B"):
     return f"{num:f} Yi{suffix}"
 
 # Download markdown functions
-def getIconField(prefixTag):
+def getIconField(prefixTag, url_prefix=""):
   if ("ubuntu" in prefixTag):
-    iconField = f"![Ubuntu icon]({imagesDir}/ubuntu.png)"
+    iconField = f"![Ubuntu icon]({url_prefix}{imagesDir}/ubuntu.png)"
   elif ("rhel" in prefixTag):
-    iconField = f"![RedHat icon]({imagesDir}/redhat.png)"
+    iconField = f"![RedHat icon]({url_prefix}{imagesDir}/redhat.png)"
   elif ("oracle" in prefixTag):
-    iconField = f"![Oracle icon]({imagesDir}/oracle.png)"
+    iconField = f"![Oracle icon]({url_prefix}{imagesDir}/oracle.png)"
   elif ("rocky" in prefixTag):
-    iconField = f"![Rocky icon]({imagesDir}/rocky.png)"
+    iconField = f"![Rocky icon]({url_prefix}{imagesDir}/rocky.png)"
   elif ("centos" in prefixTag):
-    iconField = f"![Centos icon]({imagesDir}/centos.png)"
+    iconField = f"![Centos icon]({url_prefix}{imagesDir}/centos.png)"
   else:
     iconField = ""
 
@@ -125,8 +127,8 @@ def get_download_table_top (versionTag, shortName):
     '| --- | --- | --- | --- | --- | --- | --- |'
   )
 
-def get_download_row (prefixTag, versionTag, distroLongName, tgzDownloadUrl, buildDate, size, moreInformationUrl, comment):
-  icon = getIconField(prefixTag)
+def get_download_row (prefixTag, versionTag, distroLongName, tgzDownloadUrl, buildDate, size, moreInformationUrl, comment, url_prefix=""):
+  icon = getIconField(prefixTag, url_prefix=url_prefix)
   md5DownloadUrl = tgzDownloadUrl + ".md5"
   sha256DownloadUrl = tgzDownloadUrl + ".sha256"
   humanSize = sizeof_fmt(size)
@@ -134,8 +136,8 @@ def get_download_row (prefixTag, versionTag, distroLongName, tgzDownloadUrl, bui
   download_row = f"|{icon} | {distroLongName} | [64bit x86]({tgzDownloadUrl}) - [MD5]({md5DownloadUrl}) - [SHA256]({sha256DownloadUrl}) | {buildDate} | {humanSize} | [+Info]({moreInformationUrl}) | {comment} |"
   return (download_row)
 
-def get_download_row_simple (prefixTag, versionTag, distroLongName, tgzDownloadUrl, buildDate, size, moreInformationUrl, comment):
-  icon = getIconField(prefixTag)
+def get_download_row_simple (prefixTag, versionTag, distroLongName, tgzDownloadUrl, buildDate, size, moreInformationUrl, comment, url_prefix=""):
+  icon = getIconField(prefixTag, url_prefix=url_prefix)
   md5DownloadUrl = tgzDownloadUrl + ".md5"
   sha256DownloadUrl = tgzDownloadUrl + ".sha256"
   humanSize = sizeof_fmt(size)
@@ -452,7 +454,7 @@ def append_files(file1_path, file2_path):
         with open(file2_path, 'a') as file2:
             shutil.copyfileobj(file1, file2)
 
-def outputSection(downloads_md, versionTags, releasesMatrix, shortName):
+def outputSection(downloads_md, versionTags, releasesMatrix, shortName, url_prefix=""):
   if not releasesMatrix:
     with open(downloads_md, 'a') as outfile:
       outfile.write(f'''
@@ -472,11 +474,11 @@ def outputSection(downloads_md, versionTags, releasesMatrix, shortName):
       outfile.write('\n' + download_table_top + '\n')
 
     for nRelease in orderedFilteredMatrix:
-      download_row = get_download_row (prefixTag=nRelease['prefixTag'], versionTag=nRelease['versionTag'], distroLongName=nRelease['distroLongName'], tgzDownloadUrl=nRelease['tgzDownloadUrl'], buildDate=nRelease['buildDate'], size=nRelease['size'] , moreInformationUrl=nRelease['html_url'], comment=nRelease['comment'])
+      download_row = get_download_row (prefixTag=nRelease['prefixTag'], versionTag=nRelease['versionTag'], distroLongName=nRelease['distroLongName'], tgzDownloadUrl=nRelease['tgzDownloadUrl'], buildDate=nRelease['buildDate'], size=nRelease['size'] , moreInformationUrl=nRelease['html_url'], comment=nRelease['comment'], url_prefix=url_prefix)
       with open(downloads_md, 'a') as outfile:
         outfile.write(download_row + '\n')
 
-def outputSectionSimple(downloads_md, versionTags, releasesMatrix, shortName):
+def outputSectionSimple(downloads_md, versionTags, releasesMatrix, shortName, url_prefix=""):
   for nTagVersion in versionTags:
     filteredMatrix = filterByVersionTag(releasesMatrix, nTagVersion)
     orderedFilteredMatrix = sorted(filteredMatrix, key=lambda d: d['distroLongName'])
@@ -486,7 +488,7 @@ def outputSectionSimple(downloads_md, versionTags, releasesMatrix, shortName):
       outfile.write('\n' + download_table_top + '\n')
 
     for nRelease in orderedFilteredMatrix:
-      download_row = get_download_row_simple (prefixTag=nRelease['prefixTag'], versionTag=nRelease['versionTag'], distroLongName=nRelease['distroLongName'], tgzDownloadUrl=nRelease['tgzDownloadUrl'], buildDate=nRelease['buildDate'], size=nRelease['size'] , moreInformationUrl=nRelease['html_url'], comment=nRelease['comment'])
+      download_row = get_download_row_simple (prefixTag=nRelease['prefixTag'], versionTag=nRelease['versionTag'], distroLongName=nRelease['distroLongName'], tgzDownloadUrl=nRelease['tgzDownloadUrl'], buildDate=nRelease['buildDate'], size=nRelease['size'] , moreInformationUrl=nRelease['html_url'], comment=nRelease['comment'], url_prefix=url_prefix)
       with open(downloads_md, 'a') as outfile:
         outfile.write(download_row + '\n')
 
@@ -541,13 +543,19 @@ otherVersionTags = orderedAndUniqueVersionTags (otherVersionTags)
 
 latestVersionTags = getLatestVersionTagsByBuildDate(releasesMatrix, limit=5)
 
-def generate_downloads_header(current_idCategory):
+def generate_downloads_header(current_idCategory, url_prefix=""):
     """
     Generate a markdown header menu for Zimbra downloads with the current category highlighted,
     arranged in labeled rows.
     """
+
+    if url_prefix is None:
+        url_prefix = ""
+    if url_prefix and not url_prefix.endswith("/"):
+        url_prefix = url_prefix + "/"
+
     prefix = "Maldua's Zimbra Foss Downloads"
-    postfix = "\n( Learn more at: [Maldua's Zimbra Foss](../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
+    postfix = f"\n( Learn more at: [Maldua's Zimbra Foss]({url_prefix}../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
 
     rows = []
 
@@ -556,7 +564,7 @@ def generate_downloads_header(current_idCategory):
         for idCat in ids:
             file = header_links_mapping[idCat]
             label = shortNamesLabels.get(idCat, idCat.capitalize())
-            item = f"[{label}]({file})"
+            item = f"[{label}]({url_prefix}{file})"
             if idCat == current_idCategory:
                 item = f"**{item}**"
             row_items.append(item)
@@ -897,6 +905,50 @@ def writeLatestPerFamilyDownloadsPage(downloads_md):
     header = generate_downloads_header("latest_per_family")
     outputBlockNewLine(downloads_md, header)
 
+def writeVersionPage(version_md, versionTag):
+
+    url_prefix = "../"
+    # Remove old file
+    if os.path.isfile(version_md):
+        os.remove(version_md)
+
+    header = generate_downloads_header("", url_prefix=url_prefix)
+    outputBlockNewLine(version_md, header)
+
+    append_files(templatesDir + "/" + "section-top-disclaimers.md", version_md)
+
+    filteredMatrix = filterByVersionTag(releasesMatrix, versionTag)
+
+    shortName = ""
+    if filteredMatrix:
+        category = filteredMatrix[0]["category"]
+        shortName = f"{shortNamesLabels.get(category, category)}"
+
+    outputSection(
+        downloads_md=version_md,
+        versionTags=[versionTag],
+        releasesMatrix=releasesMatrix,
+        shortName=shortName,
+        url_prefix=url_prefix
+    )
+
+    outputNewLine(version_md)
+
+    header = generate_downloads_header("", url_prefix=url_prefix)
+    outputBlockNewLine(version_md, header)
+
+def writeVersionPages():
+    """
+    Generate one markdown file per unique versionTag using outputSectionSimple().
+    Output files go to: docs/downloads/version/<versionTag>.md
+    """
+
+    version_tags = getUniqueList([row["versionTag"] for row in releasesMatrix])
+
+    for vt in version_tags:
+        version_md = os.path.join(VERSION_DIR, f"{vt}.md")
+        writeVersionPage(version_md, vt)
+
 writeAdvancedDownloadsPage(archive_md)
 writeSimpleDownloadsPage(main_downloads_md)
 
@@ -907,6 +959,8 @@ writeOtherDownloadsPage(other_md)
 writeLatestDownloadsPage(latest_md)
 writeLatestPerPlatformDownloadsPage(latest_per_platform_md)
 writeLatestPerFamilyDownloadsPage(latest_per_family_md)
+
+writeVersionPages()
 
 # Copy images/ folder into docs/
 src_images = os.path.join(os.path.dirname(__file__), "images")
