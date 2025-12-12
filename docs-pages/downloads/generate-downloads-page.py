@@ -556,7 +556,7 @@ otherVersionTags = orderedAndUniqueVersionTags (otherVersionTags)
 
 latestVersionTags = getLatestVersionTagsByBuildDate(releasesMatrix, limit=5)
 
-def generate_downloads_header(current_idCategory, url_prefix=""):
+def generate_downloads_header(current_idCategory, url_prefix="", title=""):
     """
     Generate a markdown header menu for Zimbra downloads with the current category highlighted,
     arranged in labeled rows.
@@ -568,6 +568,8 @@ def generate_downloads_header(current_idCategory, url_prefix=""):
         url_prefix = url_prefix + "/"
 
     prefix = "Maldua's Zimbra Foss Downloads"
+    if title:
+        prefix = f"{title} - {prefix}"
     postfix = f"\n( Learn more at: [Maldua's Zimbra Foss]({url_prefix}../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
 
     rows = []
@@ -616,7 +618,7 @@ def writeAdvancedDownloadsPage(downloads_md):
     description=f"Release historic archive."
     outputTitle(downloads_md, title=title, description=description)
 
-    header = generate_downloads_header("archive")
+    header = generate_downloads_header("archive", title=title)
     outputBlockNewLine(downloads_md, header)
 
     # Initial structure
@@ -671,7 +673,7 @@ def writeSimpleDownloadsPage(downloads_md):
   description=f"Main page for downloading Maldua's releases."
   outputTitle(downloads_md, title=title, description=description)
 
-  header = generate_downloads_header("main")
+  header = generate_downloads_header("main", title=title)
   outputBlockNewLine(downloads_md, header)
 
   # Write the different sections as needed
@@ -702,7 +704,7 @@ def writeCategoryDownloadsPage(
     outputTitle(downloads_md, title=title, description=description)
 
     # Common header for all category pages
-    categoryHeader = generate_downloads_header(idCategory)
+    categoryHeader = generate_downloads_header(idCategory, title=title)
     outputBlockNewLine(downloads_md, categoryHeader)
 
     outputNewLine(downloads_md)
@@ -721,7 +723,7 @@ def writeCategoryDownloadsPage(
     )
 
     outputNewHLine(downloads_md)
-    categoryHeader = generate_downloads_header(idCategory)
+    categoryHeader = generate_downloads_header(idCategory, title=title)
     outputBlockNewLine(downloads_md, categoryHeader)
 
 def writeStableDownloadsPage(downloads_md):
@@ -784,7 +786,7 @@ def writeLatestDownloadsPage(downloads_md):
     description=f"The very latest downloads."
     outputTitle(downloads_md, title=title, description=description)
 
-    header = generate_downloads_header("latest")
+    header = generate_downloads_header("latest", title=title)
     outputBlockNewLine(downloads_md, header)
 
     append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
@@ -793,7 +795,7 @@ def writeLatestDownloadsPage(downloads_md):
         outputLatestSection(downloads_md, versionTag, releasesMatrix)
 
     outputNewLine(downloads_md)
-    header = generate_downloads_header("latest")
+    header = generate_downloads_header("latest", title=title)
     outputBlockNewLine(downloads_md, header)
 
 def writeLatestPerPlatformDownloadsPage(downloads_md):
@@ -813,7 +815,7 @@ def writeLatestPerPlatformDownloadsPage(downloads_md):
     description=f"The very latest downloads grouped by platforms."
     outputTitle(downloads_md, title=title, description=description)
 
-    header = generate_downloads_header("latest_per_platform")
+    header = generate_downloads_header("latest_per_platform", title=title)
     outputBlockNewLine(downloads_md, header)
 
     append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
@@ -869,7 +871,7 @@ def writeLatestPerPlatformDownloadsPage(downloads_md):
 
     outputNewLine(downloads_md)
     # Repeat header at the bottom
-    header = generate_downloads_header("latest_per_platform")
+    header = generate_downloads_header("latest_per_platform", title=title)
     outputBlockNewLine(downloads_md, header)
 
 def writeLatestPerFamilyDownloadsPage(downloads_md):
@@ -887,7 +889,7 @@ def writeLatestPerFamilyDownloadsPage(downloads_md):
     description=f"The very latest downloads grouped by Zimbra family. E.g. Zimbra 10.0.x, Zimbra 10.1.x."
     outputTitle(downloads_md, title=title, description=description)
 
-    header = generate_downloads_header("latest_per_family")
+    header = generate_downloads_header("latest_per_family", title=title)
     outputBlockNewLine(downloads_md, header)
 
     append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
@@ -940,7 +942,7 @@ def writeLatestPerFamilyDownloadsPage(downloads_md):
     outputNewLine(downloads_md)
 
     outputNewLine(downloads_md)
-    header = generate_downloads_header("latest_per_family")
+    header = generate_downloads_header("latest_per_family", title=title)
     outputBlockNewLine(downloads_md, header)
 
 def writeVersionPage(version_md, versionTag):
@@ -955,7 +957,7 @@ def writeVersionPage(version_md, versionTag):
     description=f"Zimbra Foss {versionTag} different releases from Maldua for you to download."
     outputTitle(version_md, title=title, description=description)
 
-    header = generate_downloads_header("", url_prefix=url_prefix)
+    header = generate_downloads_header("", url_prefix=url_prefix, title=title)
     outputBlockNewLine(version_md, header)
 
     append_files(templatesDir + "/" + "section-top-disclaimers.md", version_md)
@@ -977,7 +979,7 @@ def writeVersionPage(version_md, versionTag):
 
     outputNewLine(version_md)
 
-    header = generate_downloads_header("", url_prefix=url_prefix)
+    header = generate_downloads_header("", url_prefix=url_prefix, title=title)
     outputBlockNewLine(version_md, header)
 
 def writeVersionPages():
