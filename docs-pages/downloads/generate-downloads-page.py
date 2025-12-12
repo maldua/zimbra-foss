@@ -567,9 +567,10 @@ def generate_downloads_header(current_idCategory, url_prefix="", title=""):
     if url_prefix and not url_prefix.endswith("/"):
         url_prefix = url_prefix + "/"
 
-    prefix = "Maldua's Zimbra Foss Downloads"
+    maldua_downloads_image="![Maldua Zimbra Downloads](https://maldua.github.io/zimbra-foss/downloads/images/maldua-downloads.png)"
+    prefix = f"Maldua's Zimbra Foss Downloads {maldua_downloads_image}"
     if title:
-        prefix = f"{title} - {prefix}"
+        prefix = f"{maldua_downloads_image} {title} - {prefix}"
     postfix = f"\n( Learn more at: [Maldua's Zimbra Foss]({url_prefix}../) and [Maldua's Zimbra Foss Github repo](https://github.com/maldua/zimbra-foss). )"
 
     rows = []
