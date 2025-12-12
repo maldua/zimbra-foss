@@ -457,6 +457,16 @@ def append_files(file1_path, file2_path):
         with open(file2_path, 'a') as file2:
             shutil.copyfileobj(file1, file2)
 
+def outputTitle(downloads_md, title="", description=""):
+    with open(downloads_md, 'a') as outfile:
+      outfile.write(f'''\
+---
+title: {title} - Zimbra Foss Downloads (from Maldua)
+description: {title} - {description} - Zimbra Foss Downloads (from Maldua)
+---
+
+        ''')
+
 def outputSection(downloads_md, versionTags, releasesMatrix, shortName, url_prefix=""):
   if not releasesMatrix:
     with open(downloads_md, 'a') as outfile:
@@ -602,6 +612,10 @@ def writeAdvancedDownloadsPage(downloads_md):
     if os.path.isfile(downloads_md):
         os.remove(downloads_md)
 
+    title=f"Archive"
+    description=f"Release historic archive."
+    outputTitle(downloads_md, title=title, description=description)
+
     header = generate_downloads_header("archive")
     outputBlockNewLine(downloads_md, header)
 
@@ -653,6 +667,10 @@ def writeSimpleDownloadsPage(downloads_md):
   if (os.path.isfile(downloads_md)):
     os.remove(downloads_md)
 
+  title=f"Main"
+  description=f"Main page for downloading Maldua's releases."
+  outputTitle(downloads_md, title=title, description=description)
+
   header = generate_downloads_header("main")
   outputBlockNewLine(downloads_md, header)
 
@@ -677,6 +695,11 @@ def writeCategoryDownloadsPage(
     # Empty output file
     if os.path.isfile(downloads_md):
         os.remove(downloads_md)
+
+    categoryTitle=idCategory.capitalize()
+    title=f"{categoryTitle} Downloads"
+    description=f"{categoryTitle} Downloads (Category)"
+    outputTitle(downloads_md, title=title, description=description)
 
     # Common header for all category pages
     categoryHeader = generate_downloads_header(idCategory)
@@ -757,6 +780,10 @@ def writeLatestDownloadsPage(downloads_md):
     if os.path.isfile(downloads_md):
         os.remove(downloads_md)
 
+    title=f"Latest Downloads"
+    description=f"The very latest downloads."
+    outputTitle(downloads_md, title=title, description=description)
+
     header = generate_downloads_header("latest")
     outputBlockNewLine(downloads_md, header)
 
@@ -781,6 +808,10 @@ def writeLatestPerPlatformDownloadsPage(downloads_md):
     # Remove old file
     if os.path.isfile(downloads_md):
         os.remove(downloads_md)
+
+    title=f"Latest Downloads per platform"
+    description=f"The very latest downloads grouped by platforms."
+    outputTitle(downloads_md, title=title, description=description)
 
     header = generate_downloads_header("latest_per_platform")
     outputBlockNewLine(downloads_md, header)
@@ -852,6 +883,10 @@ def writeLatestPerFamilyDownloadsPage(downloads_md):
     if os.path.isfile(downloads_md):
         os.remove(downloads_md)
 
+    title=f"Latest Downloads per Zimbra family"
+    description=f"The very latest downloads grouped by Zimbra family. E.g. Zimbra 10.0.x, Zimbra 10.1.x."
+    outputTitle(downloads_md, title=title, description=description)
+
     header = generate_downloads_header("latest_per_family")
     outputBlockNewLine(downloads_md, header)
 
@@ -914,6 +949,11 @@ def writeVersionPage(version_md, versionTag):
     # Remove old file
     if os.path.isfile(version_md):
         os.remove(version_md)
+
+
+    title=f"Zimbra Foss {versionTag}"
+    description=f"Zimbra Foss {versionTag} different releases from Maldua for you to download."
+    outputTitle(version_md, title=title, description=description)
 
     header = generate_downloads_header("", url_prefix=url_prefix)
     outputBlockNewLine(version_md, header)
