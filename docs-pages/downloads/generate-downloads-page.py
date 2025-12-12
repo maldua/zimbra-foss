@@ -113,7 +113,7 @@ def getIconField(prefixTag, url_prefix=""):
 
 def get_download_table_top_simple (versionTag, shortName):
   return (
-    f"### {versionTag} ({shortName})\n"
+    f"### [{versionTag}](/downloads/version/{versionTag}) ({shortName})\n"
     '\n'
     f'| {IMAGE_ICON} | {COMPUTER_ICON} PLATFORM | {PACKAGE_ICON} DOWNLOAD 64-BIT | {MEMO_ICON} +INFO |\n'
     '| --- | --- | --- | --- |'
@@ -121,7 +121,7 @@ def get_download_table_top_simple (versionTag, shortName):
 
 def get_download_table_top (versionTag, shortName):
   return (
-    f"### {versionTag} ({shortName})\n"
+    f"### [{versionTag}](/downloads/version/{versionTag}) ({shortName})\n"
     '\n'
     f"| {IMAGE_ICON} | {COMPUTER_ICON} Platform | {PACKAGE_ICON} Download 64-BIT | {CALENDAR_ICON} Build Date | {RULER_ICON} Size | {LINK_ICON} +Info | {MEMO_ICON} Comment |\n"
     '| --- | --- | --- | --- | --- | --- | --- |'
