@@ -82,7 +82,9 @@ latest_per_family_md = os.path.join(DOWNLOADS_OUTPUT_DIR, "latest-per-zimbra-fam
 templatesDir = 'templates'
 imagesDir = "images"
 
-repoReleasesApiUrl="https://api.github.com/repos/maldua/zimbra-foss/releases"
+ZIMBRA_FOSS_ORG="maldua"
+ZIMBRA_FOSS_REPO="zimbra-foss"
+repoReleasesApiUrl=f"https://api.github.com/repos/{ZIMBRA_FOSS_ORG}/{ZIMBRA_FOSS_REPO}/releases"
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
@@ -113,7 +115,7 @@ def getIconField(prefixTag, url_prefix=""):
 
 def get_download_table_top_simple (versionTag, shortName):
   return (
-    f"### [{versionTag}](/downloads/version/{versionTag}) ({shortName})\n"
+    f"### [{versionTag}]({ZIMBRA_FOSS_REPO}/downloads/version/{versionTag}) ({shortName})\n"
     '\n'
     f'| {IMAGE_ICON} | {COMPUTER_ICON} PLATFORM | {PACKAGE_ICON} DOWNLOAD 64-BIT | {MEMO_ICON} +INFO |\n'
     '| --- | --- | --- | --- |'
@@ -121,7 +123,7 @@ def get_download_table_top_simple (versionTag, shortName):
 
 def get_download_table_top (versionTag, shortName):
   return (
-    f"### [{versionTag}](/downloads/version/{versionTag}) ({shortName})\n"
+    f"### [{versionTag}]({ZIMBRA_FOSS_REPO}/downloads/version/{versionTag}) ({shortName})\n"
     '\n'
     f"| {IMAGE_ICON} | {COMPUTER_ICON} Platform | {PACKAGE_ICON} Download 64-BIT | {CALENDAR_ICON} Build Date | {RULER_ICON} Size | {LINK_ICON} +Info | {MEMO_ICON} Comment |\n"
     '| --- | --- | --- | --- | --- | --- | --- |'
