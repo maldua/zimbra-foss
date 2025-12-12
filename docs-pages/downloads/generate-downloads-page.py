@@ -459,7 +459,7 @@ def append_files(file1_path, file2_path):
 
 def outputTitle(downloads_md, title="", description=""):
     with open(downloads_md, 'a') as outfile:
-      outfile.write(f'''
+      outfile.write(f'''\
 ---
 title: {title} - Zimbra Foss Downloads (from Maldua)
 description: {title} - {description} - Zimbra Foss Downloads (from Maldua)
