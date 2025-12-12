@@ -9,6 +9,6 @@ Disclaimers:
 
 ---
 
-![Maldua](https://maldua.github.io/zimbra-foss/downloads/images/maldua-logo.png) **MALDUA'S Zimbra FOSS Builds** brought to you by ![bTactic](https://maldua.github.io/zimbra-foss/downloads/images/btactic-logo.png) [BTACTIC, open source & cloud solutions](https://www.btactic.com).
+[![Maldua](https://maldua.github.io/zimbra-foss/downloads/images/maldua-logo.png)](https://maldua.github.io/zimbra-foss/) **MALDUA'S Zimbra FOSS Builds** brought to you by [![bTactic](https://maldua.github.io/zimbra-foss/downloads/images/btactic-logo.png) BTACTIC, open source & cloud solutions](https://www.btactic.com). [Zimbra Network Edition support from bTactic](https://www.btactic.com/zimbra/).
 
 ---
