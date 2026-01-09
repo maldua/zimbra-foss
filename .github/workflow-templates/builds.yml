@@ -73,10 +73,7 @@ jobs:
             touch /root/.ssh/known_hosts
             ssh-keyscan github.com >> /root/.ssh/known_hosts
             cd /home/build
-            /usr/local/zimbra-foss-builder/zimbra-smart-builder.sh \
-              ${{ steps.split-tag.outputs.version }} \
-              ${{ env.ZIMBRA_BUILDER_ID }} \
-              pimbra-disabled
+            /usr/local/zimbra-foss-builder/zimbra-smart-builder.sh ${{ steps.split-tag.outputs.version }} ${{ env.ZIMBRA_BUILDER_ID }} pimbra-disabled
             chown -R ${{ steps.runner.outputs.uid }}:${{ steps.runner.outputs.gid }} /home/build/installer-build/BUILDS/*
 
       - run: cat ${{ github.workspace }}/zimbra-foss-builder/BUILDS/zimbra-builder-commands.txt
