@@ -65,12 +65,16 @@ def generate_workflow(template_content: str, distro: dict, output_dir: str, tag_
 def generate_matrix_workflow(template_content: str, output_file: str, distros: list, tag_prefix: str) -> str:
     """
     Generate a matrix workflow YAML that includes all distros in one workflow.
+    Only include distros with "is_in_matrix" set to "yes".
     """
     workflow_content = template_content
 
+    # Filter distros for matrix
+    matrix_distros = [d for d in distros if d.get("is_in_matrix", "yes").lower() == "yes"]
+
     # Build YAML matrix block manually
     matrix_lines = ["    strategy:", "      matrix:", "        distro:"]
-    for d in distros:
+    for d in matrix_distros:
         matrix_lines.append(f"          - name: {d['name'].lower().replace(' ', '-')}")
         matrix_lines.append(f"            docker_tag: {d.get('docker_tag', '')}")
         matrix_lines.append(f"            build_dir_prefix: {d.get('build_dir_prefix', '')}")
