@@ -61,7 +61,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-          image: ${{ matrix.distro.docker_tag }}
+          image: ghcr.io/maldua/zimbra-foss:docker-ubuntu-22.04-v0.0.1
           options: >
             -v ${{ github.workspace }}/zimbra-foss-builder:/usr/local/zimbra-foss-builder:ro
             -v ${{ github.workspace }}/zimbra-foss-builder/BUILDS:/home/build/installer-build/BUILDS:rw
@@ -82,7 +82,7 @@ jobs:
       - name: Get tgz release filename
         id: tgz-release
         run: |
-          RELEASE_DIR=$(find ${{ github.workspace }}/zimbra-foss-builder/BUILDS -name '${{ matrix.distro.build_dir_prefix }}*' -type d)
+          RELEASE_DIR=$(find ${{ github.workspace }}/zimbra-foss-builder/BUILDS -name 'UBUNTU22_64*' -type d)
           RELEASE_TGZ=$(find "${RELEASE_DIR}" -name "zcs-*.tgz" -type f)
           RELEASE_SHORT_TGZ=$(basename ${RELEASE_TGZ})
           echo "directory=${RELEASE_DIR}" >> $GITHUB_OUTPUT
@@ -106,8 +106,8 @@ jobs:
           repo_token: ${{ github.token }}
           prerelease: false
           generate_notes: false
-          automatic_release_tag: zimbra-foss-build-builds-with-pimbra-ubuntu-22.04/${{ steps.split-tag.outputs.version }}
-          title: Zimbra ${{ steps.split-tag.outputs.version }} FOSS Builds ( ${{ matrix.distro.fullname }} )
+          automatic_release_tag: zimbra-foss-build-ubuntu-22.04/${{ steps.split-tag.outputs.version }}
+          title: Zimbra ${{ steps.split-tag.outputs.version }} FOSS Builds ( Ubuntu 22.04 )
           body: |
             category: recent
             **Want to download?** Please use: [Maldua’s Zimbra Foss Builds Downloads Page](https://maldua.github.io/zimbra-foss/downloads.html) instead. It's much easier to read and understand.
