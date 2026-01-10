@@ -12,7 +12,7 @@ env:
 jobs:
   zimbra-release:
     name: Build Zimbra (with Pimbra) for {{BUILDZIMBRAFOR_EXPR}}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: git_clone
 {{MATRIX_SECTION}}
 
