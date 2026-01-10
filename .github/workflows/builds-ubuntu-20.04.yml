@@ -12,11 +12,23 @@ env:
 jobs:
   zimbra-release:
     name: Build Zimbra for Ubuntu 20.04
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment: git_clone
 
 
     steps:
+
+      - name: Show runner OS information
+        run: |
+          echo "Runner OS      : $RUNNER_OS"
+          echo "Runner Name    : $RUNNER_NAME"
+          echo "Runner Arch    : $RUNNER_ARCH"
+          uname -a
+
+      - name: Show Docker version
+        run: |
+          docker --version
+          docker info --format 'Server Version: {{.ServerVersion}}'
 
       - name: Prepare workspace directories
         run: |
