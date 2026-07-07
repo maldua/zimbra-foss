@@ -2,6 +2,6 @@
 
 You can subscribe to (you need to be logged in Github so that the Subscribe button appears):
 
-- 📬 [Recent/Testing Releases announcements](https://github.com/maldua/zimbra-foss-builder/discussions/9) 📬
+- 📬 [Recent/Testing Releases announcements](https://github.com/maldua/zimbra-foss/discussions/9) 📬
 
 ---
