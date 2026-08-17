@@ -274,6 +274,53 @@ def getShortNameForVersionTag(versionTag, releasesMatrix):
             return shortNamesLabels.get(category, shortNamesLabels["other"])
     return shortNamesLabels["other"]
 
+def getLatestBuildDate(matrix):
+    if not matrix:
+        return None
+
+    return max(
+        datetime.fromisoformat(row["buildDate"].replace("Z", "+00:00"))
+        for row in matrix
+    )
+
+def shouldShowRecentWarning():
+    latestStableBuildDate = getLatestBuildDate(stableReleasesMatrix)
+    latestRecentBuildDate = getLatestBuildDate(recentReleasesMatrix)
+
+    return bool(
+        latestStableBuildDate
+        and latestRecentBuildDate
+        and latestRecentBuildDate > latestStableBuildDate
+    )
+
+def outputRecentWarningBox(downloads_md):
+    if not shouldShowRecentWarning() or not recentVersionTags:
+        return
+
+    latestRecentVersionTag = recentVersionTags[0]
+
+    with open(downloads_md, 'a') as outfile:
+        outfile.write(f'''\
+<div style="background-color: #fff3cd; border: 1px solid #f0ad4e; border-radius: 4px; padding: 0.75rem 1rem; margin: 1rem 0;" markdown="1">
+<p><strong>This is the latest recent release, which you might want to use because it may include fixes for more recently discovered vulnerabilities.</strong></p>
+This is a stable release candidate that was made public in [Maldua's Zimbra FOSS Builds - Share your feedback - Zimbra Forums thread](https://forums.zimbra.org/viewtopic.php?t=72655) **less than 15 days ago**. Feedback is welcome either in the [forum thread](https://forums.zimbra.org/viewtopic.php?t=72655) or in the [issues page](https://github.com/maldua/zimbra-foss-builder/issues).
+
+''')
+
+    outputSection(
+        downloads_md=downloads_md,
+        versionTags=[latestRecentVersionTag],
+        releasesMatrix=recentReleasesMatrix,
+        shortName=shortNamesLabels["recent"]
+    )
+
+    with open(downloads_md, 'a') as outfile:
+        outfile.write('''\
+
+</div>
+
+''')
+
 def getLatestVersionTagsByDistro(releasesMatrix, distroLongName, limit=2):
     filteredMatrix = [row for row in releasesMatrix if row["distroLongName"] == distroLongName]
     if not filteredMatrix:
@@ -689,6 +736,7 @@ def writeSimpleDownloadsPage(downloads_md):
 
   # Write the different sections as needed
 
+  outputRecentWarningBox(downloads_md)
   append_files(templatesDir + "/" + "simple-title.md", downloads_md)
   append_files(templatesDir + "/" + "simple-top.md", downloads_md)
   outputSectionSimple(downloads_md=downloads_md, versionTags=simple1VersionTags, releasesMatrix=simpleReleasesMatrix, shortName=f"10.1.x {STABLE_ICON} Stable {STABLE_ICON}")
@@ -719,6 +767,8 @@ def writeCategoryDownloadsPage(
     outputNewLine(downloads_md)
 
     # Category-specific header
+    if idCategory == "stable":
+        outputRecentWarningBox(downloads_md)
     append_files(templatesDir + "/" + top_template, downloads_md)
     append_files(templatesDir + "/" + "section-top-disclaimers.md", downloads_md)
     append_files(templatesDir + "/" + f"category-{idCategory}-subscribe.md", downloads_md)
