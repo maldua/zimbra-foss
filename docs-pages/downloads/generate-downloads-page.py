@@ -303,7 +303,7 @@ def outputRecentWarningBox(downloads_md):
     with open(downloads_md, 'a') as outfile:
         outfile.write(f'''\
 <div style="background-color: #fff3cd; border: 1px solid #f0ad4e; border-radius: 4px; padding: 0.75rem 1rem; margin: 1rem 0;">
-<p><strong>This is the latest recent release which you might want to use because it might have fixed more recent vulnerabilities.</strong></p>
+<p><strong>This is the latest recent release, which you might want to use because it may include fixes for more recently discovered vulnerabilities.</strong></p>
 <p>Latest recent release: <a href="{latestRecentUrl}">{latestRecentVersionTag}</a> ({shortNamesLabels["recent"]})</p>
 </div>
 
