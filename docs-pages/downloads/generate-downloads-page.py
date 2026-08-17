@@ -315,6 +315,7 @@ def outputRecentWarningBox(downloads_md):
 
     with open(downloads_md, 'a') as outfile:
         outfile.write('''\
+
 </div>
 
 ''')
