@@ -98,7 +98,7 @@ Maldua's Zimbra FOSS often includes **Pimbra** patches. These are either securit
 
 ## Community & Support
 
-- GitHub: [maldua/zimbra-foss-builder issues page](https://github.com/maldua/zimbra-foss-builder)
+- GitHub: [maldua/zimbra-foss issues page](https://github.com/maldua/zimbra-foss/issues)
 - Forums / Feedback: Use [Zimbra forums](https://forums.zimbra.org/viewtopic.php?t=72655) or GitHub issues
 - Release Notifications (Login to Github first): [Stable](https://github.com/maldua/zimbra-foss-builder/discussions/8), [Recent](https://github.com/maldua/zimbra-foss-builder/discussions/9), [Experimental](https://github.com/maldua/zimbra-foss-builder/discussions/10).
 
