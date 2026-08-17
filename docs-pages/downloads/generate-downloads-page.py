@@ -303,7 +303,7 @@ def outputRecentWarningBox(downloads_md):
         outfile.write(f'''\
 <div style="background-color: #fff3cd; border: 1px solid #f0ad4e; border-radius: 4px; padding: 0.75rem 1rem; margin: 1rem 0;" markdown="1">
 <p><strong>This is the latest recent release, which you might want to use because it may include fixes for more recently discovered vulnerabilities.</strong></p>
-<p>This is a stable release candidate that was made public in <a href="https://forums.zimbra.org/viewtopic.php?t=72655">Maldua's Zimbra FOSS Builds - Share your feedback - Zimbra Forums thread</a> <strong>less than 15 days ago</strong>. Feedback is welcome either in the <a href="https://forums.zimbra.org/viewtopic.php?t=72655">forum thread</a> or in the <a href="https://github.com/maldua/zimbra-foss-builder/issues">issues page</a>.</p>
+This is a stable release candidate that was made public in [Maldua's Zimbra FOSS Builds - Share your feedback - Zimbra Forums thread](https://forums.zimbra.org/viewtopic.php?t=72655) **less than 15 days ago**. Feedback is welcome either in the [forum thread](https://forums.zimbra.org/viewtopic.php?t=72655) or in the [issues page](https://github.com/maldua/zimbra-foss-builder/issues).
 
 ''')
 
