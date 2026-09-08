@@ -1,0 +1,11 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+// Make width to 90% instead of the fixed width
+.container-lg {
+  max-width: 90% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
