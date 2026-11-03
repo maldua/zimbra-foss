@@ -75,7 +75,7 @@ files from your temporary Linux machine.
 
 Find the template workflow yml files such as:
 
-- `.github/workflow-templates/builds-with-zimbra.yml`
+- `.github/workflow-templates/builds-with-pimbra.yml`
 - `.github/workflow-templates/builds.yml`
 - `.github/workflow-templates/docker-builds.yml`
 
@@ -89,7 +89,7 @@ Edit `.github/workflow-templates/distros.json` then make sure to replace the mal
 
 Find the template workflow yml files such as:
 
-- `.github/workflow-templates/builds-with-zimbra.yml`
+- `.github/workflow-templates/builds-with-pimbra.yml`
 - `.github/workflow-templates/builds.yml`
 - `.github/workflow-templates/docker-builds.yml`
 
@@ -170,10 +170,10 @@ git push origin 'builds/10.0.7'
 
 This is Zimbra with Pimbra patches.
 
-As per the current [builds-with-zimbra.yml](.github/workflows/builds-with-zimbra.yml) file contents you can build right away with something like:
+As per the current [builds-with-pimbra.yml](.github/workflows/builds-with-pimbra.yml) file contents you can build right away with something like:
 ```
-git tag -a 'builds-with-zimbra/10.0.7' -m 'builds-with-zimbra/10.0.7'
-git push origin 'builds-with-zimbra/10.0.7'
+git tag -a 'builds-with-pimbra/10.0.7' -m 'builds-with-pimbra/10.0.7'
+git push origin 'builds-with-pimbra/10.0.7'
 ```
 .
 
